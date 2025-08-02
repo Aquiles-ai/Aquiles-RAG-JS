@@ -1,0 +1,30 @@
+{
+  "name": "aquiles-rag-js",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@fastify/middie": "^9.0.3",
+    "@fastify/swagger": "^9.5.1",
+    "@fastify/swagger-ui": "^5.2.3",
+    "fastify": "^5.4.0",
+    "fastify-plugin": "^5.0.1",
+    "npq": "^3.10.0",
+    "redis": "^5.7.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.32.0",
+    "nodemon": "^3.1.10"
+  }
+}
