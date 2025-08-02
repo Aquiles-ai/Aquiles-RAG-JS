@@ -16,5 +16,5 @@
 ## Installation
 
 ```bash
-npm install @aquiles-ai/aquiles-rag-js
+npm i @aquiles-ai/aquiles-rag-js
 ```
