@@ -1,7 +1,7 @@
 {
-  "name": "aquiles-rag-js",
+  "name": "@aquiles-ai/aquiles-rag-js",
   "version": "1.0.0",
-  "description": "",
+  "description": "Aquiles-RAG-JS variant made in Fastify to continue the high-performance philosophy of the Python version with FastAPI",
   "main": "src/index.js",
   "files": [
     "src"
@@ -10,10 +10,21 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/index.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["AI", "RAG", "Fastify", "LLMs", "search", "retrieval", "augmented", "generation", "API"],
+  "author": "Aquiles-ai",
+  "license": "MIT",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Aquiles-ai/Aquiles-RAG-JS.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Aquiles-ai/Aquiles-RAG-JS/issues"
+  },
+  "homepage": "https://github.com/Aquiles-ai/Aquiles-RAG-JS#readme",
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@fastify/middie": "^9.0.3",
     "@fastify/swagger": "^9.5.1",
