@@ -31,7 +31,7 @@ await fastify.register(swaggerUI, {
 
 
 fastify.get('/', async function(request, reply) {
-    reply.send({hello: 'world'})
+    reply.send({hello: 'Hey this is the JS version of Aquiles-RAG'})
 })
 
 fastify.post('/create/index', {
@@ -42,7 +42,7 @@ fastify.post('/create/index', {
       properties: {
         indexname: { type: 'string' },
         embeddings_dim: { type: 'number' },
-        dtype: { type: 'string' },
+        dtype:      { type: 'string', enum: ['FLOAT32','FLOAT16','FLOAT64'] },
         delete_the_index_if_it_exists: { type: 'boolean' },
       }
     },
@@ -115,38 +115,81 @@ fastify.post('/create/index', {
   };
 });
 
-fastify.post(
-  '/sum',
-  {
-    schema: {
-      description: 'Prueba de suma',
-      summary: 'sum',
-      tags: ['math'],
-      body: {
+fastify.post('/rag/create', {
+  schema:{
+    body: {
+      type: 'object',
+      required: ['index', 'name_chunk', 'dtype', 'chunk_size', 'raw_text', 'embeddings'],
+      properties: {
+        index: { type: 'string' },
+        name_chunk: { type: 'string' },
+        dtype:      { type: 'string', enum: ['FLOAT32','FLOAT16','FLOAT64'] },
+        chunk_size: { type: 'number' },
+        raw_text: { type: 'string' },
+        embeddings: { type: 'array', items: { type: 'number' } }
+      }
+    },
+    response: {
+      200: {
         type: 'object',
-        required: ['a', 'b'],
         properties: {
-          a: { type: 'number' },
-          b: { type: 'number' }
-        }
-      },
-      response: {
-        200: {
-          description: 'Resultado de la suma',
-          type: 'object',
-          properties: {
-            sum: { type: 'number' }
-          }
+          status: { type: 'string' },
+          key:  { type: 'string' }
         }
       }
     }
-  },
-  async (request, reply) => {
-    const { a, b } = request.body;
-    const sum = a + b;
-    return { sum };
   }
-);
+}, async (request, reply) => {
+  const { index, name_chunk, dtype, chunk_size, raw_text, embeddings } = request.body;
+  const client = fastify.redis;
+
+  let typedArray;
+
+  switch (dtype){
+    case 'FLOAT32':
+      typedArray = new Float32Array(embeddings);
+      break;
+
+    case 'FLOAT16':
+      typedArray = new Uint16Array(embeddings);
+      break;
+
+    case 'FLOAT64':
+      typedArray = new Float64Array(embeddings);
+      break;
+
+    default:
+      throw new Error(`dtype ${dtype} not supported`);
+  }
+
+  const embBytes = Buffer.from(typedArray.buffer);
+
+  const new_id = await client.incr(`${index}:next_id`);
+
+  const key = `${index}:${new_id}`;
+
+  const mapping = {
+    name_chunk: name_chunk,
+    chunk_id: new_id,
+    chunk_size: chunk_size,
+    raw_text: raw_text,
+    embedding: embBytes
+  };
+
+  try{
+    await client.hset(key, mapping=mapping);
+    return {status: 'ok', 
+    key: key};
+  }
+  catch(error){
+    return reply
+      .code(500)
+      .send({
+        error: `Error saving chunk:  '${error}'`
+      });
+  }
+});
+
 
 
 fastify.listen({ port: 3000, host: '0.0.0.0' }, function (err, address) {
