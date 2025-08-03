@@ -1,8 +1,11 @@
 {
   "name": "@aquiles-ai/aquiles-rag-js",
-  "version": "1.5.7",
+  "version": "2.0.0",
   "description": "Aquiles-RAG-JS variant made in Fastify to continue the high-performance philosophy of the Python version with FastAPI",
   "main": "src/index.js",
+  "exports": {
+    "./deploy-config": "./src/deploy_conf/deploy_config.js"
+  },
   "files": [
     "src"
   ],
@@ -42,7 +45,6 @@
     "commands": "./src/commands"
   },
   "dependencies": {
-    "@aquiles-ai/aquiles-rag-js": "file:aquiles-ai-aquiles-rag-js-1.5.0.tgz",
     "@fastify/middie": "^9.0.3",
     "@fastify/swagger": "^9.5.1",
     "@fastify/swagger-ui": "^5.2.3",

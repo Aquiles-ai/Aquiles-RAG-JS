@@ -342,7 +342,7 @@ fastify.post('/rag/query-rag', {
     total:   docs.length,
     results: docs
   });
-})
+});
 
 fastify.post('/rag/drop_index', {
   schema:{
@@ -391,7 +391,7 @@ fastify.post('/rag/drop_index', {
         error: `Delete error:  '${error}'`
       });
   }
-})
+});
 
 fastify.get('/health/live', {
   schema:{
@@ -434,10 +434,12 @@ fastify.get('/health/ready', {
   catch(error){
     return reply.code(503).send({status: "Redis unavailable"});
   }
-})
+});
 
 fastify.listen({ port: 3000, host: '0.0.0.0' }, function (err, address) {
   if (err) {
     fastify.log.error(err)
     process.exit(1)
-  } })
+  } });
+
+export default fastify;
