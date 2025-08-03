@@ -4,7 +4,7 @@ import swagger from '@fastify/swagger';
 import swaggerUI from '@fastify/swagger-ui';
 import cors from '@fastify/middie';
 import { loadAquilesConfig } from './configs/configs.js';
-import { SCHEMA_FIELD_TYPE, SCHEMA_VECTOR_FIELD_ALGORITHM } from 'redis';
+import { SCHEMA_FIELD_TYPE, SCHEMA_VECTOR_FIELD_ALGORITHM, createClient } from 'redis';
 
 
 const fastify = Fastify({
@@ -390,6 +390,49 @@ fastify.post('/rag/drop_index', {
       .send({
         error: `Delete error:  '${error}'`
       });
+  }
+})
+
+fastify.get('/health/live', {
+  schema:{
+    response: {
+      200: {
+        type: 'object',
+        properties: {
+          status: { type: 'string' },
+        },
+      }
+    }
+  },
+}, async (request, reply) => {
+  return reply.code(200).send({
+    status:  'alive',
+  });
+})
+
+fastify.get('/health/ready', {
+  schema:{
+    response: {
+      200: {
+        type: 'object',
+        properties: {
+          status: { type: 'string' },
+        },
+      }
+    }
+  },
+}, async (request, reply) => {
+
+  const client = fastify.redis;
+
+  try{
+    await client.ping();
+    return reply.code(200).send({
+      status:  'ready',
+    });
+  }
+  catch(error){
+    return reply.code(503).send({status: "Redis unavailable"});
   }
 })
 
