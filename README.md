@@ -8,6 +8,8 @@
   </a>
 </div>
 
+## Hey, this repo and project is paused, we recommend using [Aquiles-RAG](https://github.com/Aquiles-ai/Aquiles-RAG)
+
 > 🚧 **Warning:** This version is still under development and **not** recommended for production use.  
 > ⚠️ For a stable production release, please use the original [Aquiles-RAG](https://github.com/Aquiles-ai/Aquiles-RAG).
 

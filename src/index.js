@@ -137,7 +137,8 @@ fastify.post('/create/index', {
       M:                16,
       EF_CONSTRUCTION:  200,
       EF_RUNTIME:       100
-    }
+    },
+    embedding_model: {type: SCHEMA_FIELD_TYPE.TAG, SEPARATOR: "|"}
   };
 
   await client.ft.create(
@@ -164,7 +165,8 @@ fastify.post('/rag/create', {
         dtype:      { type: 'string', enum: ['FLOAT32','FLOAT16','FLOAT64'] },
         chunk_size: { type: 'number' },
         raw_text: { type: 'string' },
-        embeddings: { type: 'array', items: { type: 'number' } }
+        embeddings: { type: 'array', items: { type: 'number' } },
+        embedding_model:{ type: ['string', 'null'], default: null }
       }
     },
     response: {
@@ -180,7 +182,7 @@ fastify.post('/rag/create', {
   preHandler: fastify.verifyApiKey,
 
 }, async (request, reply) => {
-  const { index, name_chunk, dtype, chunk_size, raw_text, embeddings } = request.body;
+  const { index, name_chunk, dtype, chunk_size, raw_text, embeddings,  embedding_model } = request.body;
   const client = fastify.redis;
 
   let typedArray;
@@ -216,6 +218,16 @@ fastify.post('/rag/create', {
     embedding: embBytes
   };
 
+  let val = embedding_model;
+
+  try {
+    val = (val == null) ? null : String(val).trim();
+  } catch (err) {
+    val = null;
+  }
+
+  mapping["embedding_model"] = val || "__unknown__";
+
   try{
     await client.hSet(key, mapping);
     return {status: 'ok', 
@@ -241,7 +253,8 @@ fastify.post('/rag/query-rag', {
         embeddings: { type: 'array', items: { type: 'number' } },
         dtype:      { type: 'string', enum: ['FLOAT32','FLOAT16','FLOAT64'] },
         top_k: { type: 'number' },
-        cosine_distance_threshold: { type: 'number' }
+        cosine_distance_threshold: { type: 'number' },
+        embedding_model:{ type: ['string', 'null'], default: null }
       }
     },
     response: {
